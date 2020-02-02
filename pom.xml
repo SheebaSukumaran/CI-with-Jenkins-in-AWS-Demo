@@ -36,7 +36,15 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.1.2</version>
                 </plugin>
-            </plugins>
+		<plugin>
+			<groupid>org.apache.maven.plugins</groupid>
+			<artifactid>maven-compiler-plugin</artifactid>
+			<configuration>
+				<source>1.6</source>
+				<target>1.6</target>
+		        </configuration>
+                </plugin>
+	</plugins>
         </pluginManagement>
         <plugins>
                        <plugin>
