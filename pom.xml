@@ -14,7 +14,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
+<distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>http://http://35.197.220.43:8081/nexus/content/repositories/thirdparty/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>http://http://35.197.220.43:8081/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
    <dependencies>
         <dependency>
             <groupId>junit</groupId>
