@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('CodeQuality-SonarQube') {
             steps {
-                withSonarQubeEnv('sonarqube'){
+                withSonarQubeEnv('sonar'){
                 echo "SonarQube.."
                 sh 'mvn sonar:sonar'
                 }
