@@ -5,8 +5,8 @@ pipeline {
     NEXUS_PROTOCOL = "http"
     NEXUS_URL = "35.242.165.254:8081"
     NEXUS_REPOSITORIES = "CICDRepo"
-    NEXUS_CREDENTIAL_ID = "admin"
-    CREDENTIALSID = "admin"
+    NEXUS_CREDENTIAL_ID = "nexusadmin"
+    CREDENTIALSID = "nexusadmin"
     }
     stages {
         stage('CodeQuality-SonarQube') {
