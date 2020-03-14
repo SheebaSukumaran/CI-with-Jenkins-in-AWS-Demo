@@ -2,14 +2,14 @@ pipeline {
     agent any 	
 	environment {
 		
-		PROJECT_ID = 'third-fire-260721'
-                CLUSTER_NAME = 'k8s-cluster1'
-                LOCATION = 'europe-north1-a'
-                CREDENTIALS_ID = 'kubernetes'		
+		PROJECT_ID = 'devops-training-sheeba'
+                CLUSTER_NAME = 'k8s-demo-cluster'
+                LOCATION = 'europe-west3-b'
+                CREDENTIALS_ID = 'kuberneteslogin'		
 	}
 	
     stages {	
-	   stage('Scm Checkout') {            
+	   stage('Checkout Code') {            
 		steps {
                   checkout scm
 		}	
@@ -33,7 +33,7 @@ pipeline {
 		     /* commented docker hub image building   
                       myimage = docker.build("kumarmitdocker/devops:${env.BUILD_ID}")
 		     */
-		      myimage = docker.build("gcr.io/third-fire-260721/kumarmitdocker/devops:${env.BUILD_ID}")
+		      myimage = docker.build("gcr.io/devops-training-sheeba/kumarmitdocker/devops:${env.BUILD_ID}")
                    }
                 }
 	   }
