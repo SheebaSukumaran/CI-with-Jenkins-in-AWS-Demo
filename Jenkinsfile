@@ -1,81 +1,67 @@
 pipeline {
-    agent any
-    environment {
-    NEXUS_VERSION = "nexus3"
-    NEXUS_PROTOCOL = "http"
-    NEXUS_URL = "35.242.165.254:8081"
-    NEXUS_REPOSITORIES = "CICDRepo"
-    NEXUS_CREDENTIAL_ID = "nexusadmin"
-    CREDENTIALSID = "nexusadmin"
-    }
-    stages {
-        stage('CodeQuality-SonarQube') {
-            steps {
-                withSonarQubeEnv('sonar1'){
-                echo "SonarQube.."
-                sh 'mvn sonar:sonar'
-                }
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'Building..'
-                sh 'mvn compile'
-            }
-        }
-        stage('Clean and Package'){
-            steps {
-            echo "Cleaning and Packaging..."
-            sh 'mvn clean package'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-                sh 'mvn test'
-            }
-        }
-        stage("publish to nexus") {
-         steps {
-             script {
-             pom = readMavenPom file: "pom.xml";
-             filesByGlob = findFiles(glob: "project/target/*.war");
-             echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
-             artifactPath = filesByGlob[0].path;
-             artifactExists = fileExists artifactPath;
-             if(artifactExists) {
-                 echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version: ${pom.version}"
-                 nexusArtifactUploader(
-                 nexusVersion: NEXUS_VERSION,
-                 protocol: NEXUS_PROTOCOL,
-                 nexusUrl: NEXUS_URL,
-                 groupId: pom.groupId,
-                 version: "1.2",
-                 repository: NEXUS_REPOSITORIES,
-                 credentialsId: NEXUS_CREDENTIAL_ID,
-                 artifacts: [
-                     [artifactId: pom.artifactId,
-                     classifier: '',
-                     file: artifactPath,
-                     type: "war"],
-                     [artifactId: pom.artifactId,
-                     classifier: '',
-                     file: "pom.xml",
-                     type: "pom"]
-                ]
-				);
-              } else {
-                     error "*** File: ${artifactPath}, could not be found";
-                }
-
-             }
-         }
-      }
+    agent any 	
+	environment {
 		
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
+		PROJECT_ID = 'third-fire-260721'
+                CLUSTER_NAME = 'k8s-cluster1'
+                LOCATION = 'europe-north1-a'
+                CREDENTIALS_ID = 'kubernetes'		
+	}
+	
+    stages {	
+	   stage('Scm Checkout') {            
+		steps {
+                  checkout scm
+		}	
+           }
+           
+	   stage('Build') { 
+                steps {
+                  echo "Cleaning and packaging..."
+                  sh 'mvn clean package'		
+                }
+           }
+	   stage('Test') { 
+		steps {
+	          echo "Testing..."
+		  sh 'mvn test'
+		}
+	   }
+	   stage('Build Docker Image') { 
+		steps {
+                   script {
+		     /* commented docker hub image building   
+                      myimage = docker.build("kumarmitdocker/devops:${env.BUILD_ID}")
+		     */
+		      myimage = docker.build("gcr.io/third-fire-260721/kumarmitdocker/devops:${env.BUILD_ID}")
+                   }
+                }
+	   }
+	   stage("Push Docker Image") {
+                steps {
+                   script {
+                   /*   //Commented Docker Hub registry push
+			   docker.withRegistry('https://registry.hub.docker.com', 'docker') {
+                            myimage.push("${env.BUILD_ID}")		
+                     }
+		     */
+			   docker.withRegistry('https://gcr.io', 'gcr:gcrcredential') {
+                            myimage.push("${env.BUILD_ID}")		
+                     }
+			   
+                   }
+                }
             }
-        }
+	   
+           stage('Deploy to K8s') { 
+                steps{
+                   echo "Deployment started ..."
+		   sh 'ls -ltr'
+		   sh 'pwd'
+		   sh "sed -i 's/tagversion/${env.BUILD_ID}/g' deployment.yaml"
+                   step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+		   echo "Deployment Finished ..."
+            }
+          }
     }
 }
