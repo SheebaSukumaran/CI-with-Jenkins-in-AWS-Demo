@@ -17,7 +17,7 @@ spec:
   spec:
    containers:
    - name: test-webapp
-     image: gcr.io/devops-training-sheeba/test-webapp/devops:tagversion
+     image: gcr.io/devops-training-sheeba/kubernetesrepos:tagversion
      ports:
      - containerPort: 8080
 
