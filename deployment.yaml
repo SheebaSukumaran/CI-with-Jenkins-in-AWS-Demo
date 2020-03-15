@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: myapp
+ name: test-webapp
  labels:
-  app: myapp
+  app: test-webapp
 spec:
  replicas: 1
  selector:
   matchLabels:
-   app: myapp
+   app: test-webapp
  template:
   metadata: 
    labels:
-    app: myapp
+    app: test-webapp
   spec:
    containers:
-   - name: myapp
-     image: gcr.io/third-fire-260721/kumarmitdocker/devops:tagversion
+   - name: test-webapp
+     image: gcr.io/devops-training-sheeba/kubernetesrepos/devops:tagversion
      ports:
      - containerPort: 8080
 
@@ -25,11 +25,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: myapp
+  name: test-webapp
 spec:
   type: LoadBalancer
   selector:
-    app: myapp
+    app: test-webapp
   ports:
     - protocol: TCP
       port: 80
