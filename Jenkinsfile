@@ -33,7 +33,7 @@ pipeline {
 		     /* commented docker hub image building   
                       myimage = docker.build("kumarmitdocker/devops:${env.BUILD_ID}")
 		     */
-		      myimage = docker.build("gcr.io/devops-training-sheeba/kumarmitdocker/devops:${env.BUILD_ID}")
+		      myimage = docker.build("gcr.io/devops-training-sheeba/kubernetesrepos/devops:${env.BUILD_ID}")
                    }
                 }
 	   }
