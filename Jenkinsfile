@@ -30,7 +30,7 @@ pipeline {
 	   stage('Build Docker Image') { 
 		steps {
                    script {
-		       myimage = docker.build("gcr.io/devops-training-sheeba/kubernetesrepos/devops:${env.BUILD_ID}")
+		       myimage = docker.build("gcr.io/devops-training-sheeba/kubernetesrepos:${env.BUILD_ID}")
                    }
                 }
 	   }
