@@ -5,7 +5,7 @@ pipeline {
 		PROJECT_ID = 'devops-training-sheeba'
                 CLUSTER_NAME = 'k8s-demo-cluster'
                 LOCATION = 'europe-west3-b'
-                CREDENTIALS_ID = 'kuberneteslogin'		
+                CREDENTIALS_ID = 'kubernetes'		
 	}
 	
     stages {	
